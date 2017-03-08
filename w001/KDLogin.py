@@ -6,16 +6,16 @@
 # Blog: Ww2zero.github.io
 # Function description
 #
-
-import urllib
-import urllib2
 import ConfigParser
 import os
 import requests
 import time
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf8')
+
+
 class KDLogin(object):
 
     def __init__(self):
@@ -49,28 +49,21 @@ class KDLogin(object):
     def Login(self, sectionid):
 
         # 构造Post数据
-        postData = {'op': 'dmlogin',
-                    'f': 'st',
-                    'username': self.getConfig(sectionid, "Username"),
-                    'password': self.getConfig(sectionid, "Password"),
-                    'pwd': self.getConfig(sectionid, "Password"),
-                    'secret': 'true'
-                    }
-        # 需要给Post数据编码
-        postData = urllib.urlencode(postData)
-        # 通过urllib2提供的request方法来向指定Url发送我们构造的数据，并完成登录过程
-        request = urllib2.Request(self.loginURL, postData, self.headers)
-        # print request
-        response = urllib2.urlopen(request)
-        text = response.read()
-        # utf8Data = text
-        # print utf8Data
-        # #unicodeData = utf8Data.decode("UTF-8")
-        # gbkData = utf8Data.decode("UTF-8")
-        # #print unicodeData
-        # #gbkData = unicodeData.encode("GBK")
+        postData = {
+            'op': 'dmlogin', 'f': 'st', 'username': self.getConfig(
+                sectionid, "Username").decode('gb2312'), 'password': self.getConfig(
+                sectionid, "Password").decode('gb2312'), 'pwd': self.getConfig(
+                sectionid, "Password").decode('gb2312'), 'secret': 'true'}
+
+        r = requests.post(
+            self.loginURL,
+            data=postData,
+            headers=self.headers)
+
+        text = r.text
+
         print "正在登陆金证内网.."
-        print "登陆的用户名为：" + self.getConfig(sectionid, "Username")
+        print "登陆的用户名为：" + self.getConfig(sectionid, "Username").decode('gb2312')
         if (len(text) > 600):
             if text.find("用户名和密码不能为空") > 0:
                 print "登录失败;账号或是密码错误!"
@@ -80,14 +73,13 @@ class KDLogin(object):
         time.sleep(2)
 
     def Main(self):
-
         print "请选择要登录的账号"
         print "----账号1------"
-        print "内网账号：" + self.getConfig('weblogin1', "Username")
+        print "内网账号：" + self.getConfig('weblogin1', "Username").decode('gb2312')
         print "----账号2------"
-        print "内网账号：" + self.getConfig('weblogin2', "Username")
+        print "内网账号：" + self.getConfig('weblogin2', "Username").decode('gb2312')
         time.sleep(1)
-        i = input("请输入要登录的账号（1/3）:")
+        i = input("请输入要登录的账号（1/2）:")
         self.Logout()
         if i == 1:
             self.Login('weblogin1')
@@ -96,9 +88,11 @@ class KDLogin(object):
         else:
             print "输入错误"
             print "正在退出.."
-            time.sleep(2)
+            time.sleep(1)
             exit()
 
 if __name__ == '__main__':
     dk = KDLogin()
-    dk.Main()
+    try:
+        dk.Main()
+
