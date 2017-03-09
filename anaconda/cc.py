@@ -26,7 +26,7 @@ def grey_color_func(word, font_size, position, orientation, random_state=None, *
 d = path.dirname(__file__)
 
 
-mask = np.array(Image.open(path.join(d, "tx.png")))
+mask = np.array(Image.open(path.join(d, "298613.png")))
 
 
 text = open('23.txt', 'r', encoding='UTF-8').read()

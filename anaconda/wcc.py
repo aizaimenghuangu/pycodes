@@ -6,32 +6,33 @@ import jieba
 
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
+
 stopwords = {}
 
 
 def importStopword(filename=''):
-    global stopwords
-    f = open(filename, 'r', encoding='utf-8')
+  global stopwords
+  f = open(filename, 'r', encoding='utf-8')
+  line = f.readline().rstrip()
+
+  while line:
+    stopwords.setdefault(line, 0)
+    stopwords[line] = 1
     line = f.readline().rstrip()
 
-    while line:
-        stopwords.setdefault(line, 0)
-        stopwords[line] = 1
-        line = f.readline().rstrip()
-
-    f.close()
+  f.close()
 
 
 def processChinese(text):
-    seg_generator = jieba.cut(text)  # 使用结巴分词，也可以不使用
+  seg_generator = jieba.cut(text)  # 使用结巴分词，也可以不使用
 
-    seg_list = [i for i in seg_generator if i not in stopwords]
+  seg_list = [i for i in seg_generator if i not in stopwords]
 
-    seg_list = [i for i in seg_list if i != u' ']
+  seg_list = [i for i in seg_list if i != u' ']
 
-    seg_list = r' '.join(seg_list)
+  seg_list = r' '.join(seg_list)
 
-    return seg_list
+  return seg_list
 
 importStopword(filename='./stopwords.txt')
 
