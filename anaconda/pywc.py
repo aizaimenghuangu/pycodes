@@ -4,6 +4,7 @@ from scipy.misc import imread
 import matplotlib.pyplot as plt
 import jieba
 import os
+import random
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 
@@ -39,12 +40,10 @@ class wordcloud(object):
                     for line in f:
                         self.text = self.text + line
 
-    def importTextfile(self,filename):
+    def importTextfile(self, filename):
         with open(filename, 'r', encoding='utf-8') as f:
             for line in f:
                 self.text = self.text + line
-
-
 
     def setBackgroudPic(self, bgfilename):
         self.bgpic = imread(bgfilename)
@@ -54,14 +53,14 @@ class wordcloud(object):
 
     def createWordCloud(self):
         self.wc = WordCloud(font_path=self.fontpath,  # 设置字体
-                            width=600,  # 宽度
-                            height=600,  # 高度
-                            background_color="black",  # 背景颜色
-                            max_words=500,  # 词云显示的最大词数
-                            #mask=self.bgpic,  # 设置背景图片
+                            width=1600,  # 宽度
+                            height=1600,  # 高度
+                            background_color="gray",  # 背景颜色
+                            max_words=2000,  # 词云显示的最大词数
+                            mask=self.bgpic,  # 设置背景图片
                             max_font_size=100,  # 字体最大值
-                            min_font_size=10, #字体最小值
-                            random_state=100,
+                            # min_font_size=10,  # 字体最小值
+                            random_state=40,
                             relative_scaling=0
                             )
         # print(self.text)
@@ -73,21 +72,25 @@ class wordcloud(object):
 
         plt.figure()
         # 以下代码显示图片
+        #plt.imshow(self.wc.recolor(color_func=self.grey_color_func, random_state=3))
         plt.imshow(self.wc)
         plt.axis("off")
         plt.show()
 
+    def grey_color_func(self, word, font_size, position, orientation, random_state=None, **kwargs):
+        return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
+
     # 保存图片
-    def savepicname(self, picname="wc.png"):
-        img =  self.wc.to_image()
+    def savepicname(self, picname="logo11.png"):
+        img = self.wc.to_image()
         img.save(picname)
 
 if __name__ == '__main__':
     wc = wordcloud()
     wc.importStopWord("stopword.txt")
-    #wc.importTextpath('G:\\Ww\\Studio\\NodeStudio\\blog\\source\\_posts')
-    wc.importTextfile('23.txt')
-    wc.setBackgroudPic("tx.png")
+    wc.importTextpath('G:\\Ww\\Studio\\NodeStudio\\blog\\source\\_posts')
+    # wc.importTextfile('23.txt')
+    wc.setBackgroudPic("logo.png")
     wc.setFont("DroidSansFallbackFull.ttf")
     wc.createWordCloud()
     wc.savepicname()
